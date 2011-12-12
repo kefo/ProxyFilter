@@ -155,6 +155,9 @@ public class RequestProxy {
         	proxyResponseStr = proxyResponseStr.replaceAll("href=\"/", "href=\"/diglib/");
         	proxyResponseStr = proxyResponseStr.replaceAll("src=\"/", "src=\"/diglib/");
         	proxyResponseStr = proxyResponseStr.replaceAll("url\\(/", "url\\(/diglib/");
+        	
+        	proxyResponseStr = proxyResponseStr.replaceAll("/nlc/", "/lcds/");
+        	
     		PrintWriter responseStream = hsResponse.getWriter();
     		copyStreamText(proxyResponseStr, responseStream);
         }
