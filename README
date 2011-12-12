@@ -1,0 +1,41 @@
+ProxyFilter
+
+If a filter-mapping url-pattern in the web.xml file matches the 
+requested URL, then the request will be sent to the ProxyFilter, which 
+will in turn forward the request.  A few searches and replaces are 
+performed on the response to re-write URLs in response document.
+
+The proxy point is hard-coded in:
+/src/gov/loc/ndmso/ProxyFilter/ProxyFilter.java
+
+The searches and replaces are hard-coded in 
+/src/gov/loc/ndmso/ProxyFilter/RequestProxy.java
+
+Install the built jar to the WEB-INF/lib directory.
+
+Add to web.xml (after description but before listener or servlets):
+
+    <filter>
+      <filter-name>ProxyFilter</filter-name>
+      <filter-class>gov.loc.ndmso.proxyfilter.ProxyFilter</filter-class>
+    </filter>
+    
+	<filter-mapping>
+      <filter-name>ProxyFilter</filter-name>
+      <url-pattern>/lcds/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+      <filter-name>ProxyFilter</filter-name>
+      <url-pattern>/static/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+      <filter-name>ProxyFilter</filter-name>
+      <url-pattern>/media/*</url-pattern>
+    </filter-mapping>
+    
+
+Gratitude to Paul Tuckey of urlrewritefilter (http://code.google.com/p/urlrewritefilter/) 
+and Joachim Ansorg, whose work was used by Tuckey.
+
+Questions/comments to Kevin Ford (kefo@loc.gov, kefo@3windmills.com)
+
