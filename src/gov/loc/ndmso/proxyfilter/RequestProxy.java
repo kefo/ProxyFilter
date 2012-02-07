@@ -92,24 +92,24 @@ public class RequestProxy {
      * @throws java.io.IOException Passed on from the connection logic.
      */
     public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse) throws IOException {
-        log.info("execute, target is " + target);
-        log.info("response commit state: " + hsResponse.isCommitted());
+        // log.info("execute, target is " + target);
+        // log.info("response commit state: " + hsResponse.isCommitted());
 
         if (target == null || "".equals(target) || "".equals(target.trim())) {
-            log.error("The target address is not given. Please provide a target address.");
+            // log.error("The target address is not given. Please provide a target address.");
             return;
         }
 
-        log.info("checking url");
+        // log.info("checking url");
         final URL url;
         try {
             url = new URL(target);
         } catch (MalformedURLException e) {
-            log.error("The provided target url is not valid.", e);
+            // log.error("The provided target url is not valid.", e);
             return;
         }
 
-        log.info("seting up the host configuration");
+        // log.info("setting up the host configuration");
 
         final HostConfiguration config = new HostConfiguration();
 
@@ -119,66 +119,70 @@ public class RequestProxy {
         final int port = url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
         config.setHost(url.getHost(), port, "http");
 
-        log.info("config is " + config.toString());
+        // log.info("config is " + config.toString());
 
         final HttpMethod targetRequest = setupProxyRequest(hsRequest, url);
         if (targetRequest == null) {
-            log.error("Unsupported request method found: " + hsRequest.getMethod());
+            // log.error("Unsupported request method found: " + hsRequest.getMethod());
             return;
         }
 
         //perform the request to the target server
         final HttpClient client = new HttpClient(new SimpleHttpConnectionManager());
-        if (log.isInfoEnabled()) {
-            log.info("client state" + client.getState());
-            log.info("client params" + client.getParams().toString());
-            log.info("executeMethod / fetching data ...");
-        }
+        //if (log.isInfoEnabled()) {
+            // log.info("client state" + client.getState());
+            // log.info("client params" + client.getParams().toString());
+            // log.info("executeMethod / fetching data ...");
+        //}
 
         final int result = client.executeMethod(config, targetRequest);
 
         //copy the target response headers to our response
         setupResponseHeaders(targetRequest, hsResponse);
         
-        String originalResponseText = targetRequest.getResponseBodyAsString();
-        //the body might be null, i.e. for responses with cache-headers which leave out the body
+        String binRegex = "(\\.(?i)(jpg|png|gif|bmp|mp3|mpg))";
         
-        if (originalResponseText != null) {
+        if ( target.matches(binRegex) ) {
+        	log.info("binRegex matched: " + target);
+            InputStream originalResponseStream = targetRequest.getResponseBodyAsStream();
+            
+            if (originalResponseStream != null) {
+
+            	if (targetRequest.getResponseHeaders().toString().matches("(?i).*content-type.*")) {
+            		PrintWriter responseStream = hsResponse.getWriter();
+            		copyStreamText(targetRequest.getResponseBodyAsString(), responseStream);
+            	} else {
+            		OutputStream responseStream = hsResponse.getOutputStream();
+            		copyStreamBinary(originalResponseStream, responseStream);
+            	}
+            }
+        	
+        } else {
+        	log.info("binRegex NOT matched: " + target);
         	String proxyResponseStr = targetRequest.getResponseBodyAsString();
-        	//proxyResponseStr = proxyResponseStr.replaceAll("xqy", "jsp");
+        	// the body might be null, i.e. for responses with cache-headers which leave out the body
+        
+        	if (proxyResponseStr != null) {
+        		//proxyResponseStr = proxyResponseStr.replaceAll("xqy", "jsp");
         	
-        	proxyResponseStr = proxyResponseStr.replaceAll("National Library Catalog", "Library of Congress Data Service");
-        	proxyResponseStr = proxyResponseStr.replaceAll("Library of Congress collections", "Library of Congress bibliographic data");
-        	proxyResponseStr = proxyResponseStr.replaceAll("Library of Congress Collections", "Library of Congress Bibliographic Data");
-        	
-        	proxyResponseStr = proxyResponseStr.replaceAll("action=\"/", "action=\"/diglib/");
-        	proxyResponseStr = proxyResponseStr.replaceAll("href=\"/", "href=\"/diglib/");
-        	proxyResponseStr = proxyResponseStr.replaceAll("src=\"/", "src=\"/diglib/");
-        	proxyResponseStr = proxyResponseStr.replaceAll("url\\(/", "url\\(/diglib/");
-        	
-        	proxyResponseStr = proxyResponseStr.replaceAll("/nlc/", "/lcds/");
-        	
-    		PrintWriter responseStream = hsResponse.getWriter();
-    		copyStreamText(proxyResponseStr, responseStream);
-        }
-
-      //InputStream originalResponseStream = targetRequest.getResponseBodyAsStream();
-        /*
-         if (originalResponseStream != null) {
-
-        	if (targetRequest.getResponseHeaders().toString().matches("(?i).*content-type.*")) {
+        		proxyResponseStr = proxyResponseStr.replaceAll("National Library Catalog", "Library of Congress Data Service");
+        		proxyResponseStr = proxyResponseStr.replaceAll("Library of Congress collections", "Library of Congress bibliographic data");
+        		proxyResponseStr = proxyResponseStr.replaceAll("Library of Congress Collections", "Library of Congress Bibliographic Data");
+        		
+        		proxyResponseStr = proxyResponseStr.replaceAll("action=\"/", "action=\"/diglib/");
+        		proxyResponseStr = proxyResponseStr.replaceAll("href=\"/", "href=\"/diglib/");
+        		proxyResponseStr = proxyResponseStr.replaceAll("src=\"/", "src=\"/diglib/");
+        		proxyResponseStr = proxyResponseStr.replaceAll("url\\(/", "url\\(/diglib/");
+        		
+        		proxyResponseStr = proxyResponseStr.replaceAll("/nlc/", "/lcds/");
+        		
         		PrintWriter responseStream = hsResponse.getWriter();
-        		copyStreamText(targetRequest.getResponseBodyAsString(), responseStream);
-        	} else {
-        		OutputStream responseStream = hsResponse.getOutputStream();
-        		copyStreamBinary(originalResponseStream, responseStream);
-        		//PrintWriter responseStream = hsResponse.getWriter();
-        		//copyStreamText(targetRequest.getResponseBodyAsString(), responseStream);
+        		copyStreamText(proxyResponseStr, responseStream);
         	}
         }
-        */
 
-        log.info("set up response, result code was " + result);
+        // log.info("set up response, result code was " + result);
+        targetRequest.releaseConnection();
     }
 
     public static void copyStreamText(String in, PrintWriter out) throws IOException {
@@ -226,7 +230,7 @@ public class RequestProxy {
         } else if ("GET".equalsIgnoreCase(methodName)) {
             method = new GetMethod();
         } else {
-            log.warn("Unsupported HTTP method requested: " + hsRequest.getMethod());
+            // log.warn("Unsupported HTTP method requested: " + hsRequest.getMethod());
             return null;
         }
 
@@ -257,7 +261,7 @@ public class RequestProxy {
                 Enumeration values = hsRequest.getHeaders(headerName);
                 while (values.hasMoreElements()) {
                     String headerValue = (String) values.nextElement();
-                    log.info("setting proxy request parameter:" + headerName + ", value: " + headerValue);
+                    // log.info("setting proxy request parameter:" + headerName + ", value: " + headerValue);
                     method.addRequestHeader(headerName, headerValue);
                 }
             }
@@ -266,16 +270,16 @@ public class RequestProxy {
         // add rs5/tomcat5 request header for ML
         method.addRequestHeader("X-Via", "tomcat5");
 
-        log.info("proxy query string " + method.getQueryString());
+        // log.info("proxy query string " + method.getQueryString());
         return method;
     }
 
     private static void setupResponseHeaders(HttpMethod httpMethod, HttpServletResponse hsResponse) {
-        if ( log.isInfoEnabled() ) {
-            log.info("setupResponseHeaders");
-            log.info("status text: " + httpMethod.getStatusText());
-            log.info("status line: " + httpMethod.getStatusLine());
-        }
+        //if ( log.isInfoEnabled() ) {
+            // log.info("setupResponseHeaders");
+            // log.info("status text: " + httpMethod.getStatusText());
+            // log.info("status line: " + httpMethod.getStatusLine());
+        //}
 
         //filter the headers, which are copied from the proxy response. The http lib handles those itself.
         //Filtered out: the content encoding, the content length and cookies
@@ -296,9 +300,9 @@ public class RequestProxy {
             }
 
             hsResponse.addHeader(h.getName(), h.getValue());
-            log.info("setting response parameter:" + h.getName() + ", value: " + h.getValue());
+            // log.info("setting response parameter:" + h.getName() + ", value: " + h.getValue());
         }
-        //fixme what about the response footers? (httpMethod.getResponseFooters())
+        // fix me what about the response footers? (httpMethod.getResponseFooters())
 
         if (httpMethod.getStatusCode() != 200) {
             hsResponse.setStatus(httpMethod.getStatusCode());
