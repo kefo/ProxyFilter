@@ -51,7 +51,7 @@ public final class ProxyFilter implements Filter {
         String pathInfo = hsRequest.getPathInfo();
         String queryString = hsRequest.getQueryString();
         
-        log.info("scheme is " + scheme + "; serverName is " + serverName + "; portNumber is " + portNumber + "; contextPath is " + contextPath + "; servletPath is " + servletPath + "; pathInfo is " + pathInfo + "; queryString is " + queryString);
+        // log.info("scheme is " + scheme + "; serverName is " + serverName + "; portNumber is " + portNumber + "; contextPath is " + contextPath + "; servletPath is " + servletPath + "; pathInfo is " + pathInfo + "; queryString is " + queryString);
         
         servletPath = servletPath.replaceAll("/lcds", "/nlc");
         
