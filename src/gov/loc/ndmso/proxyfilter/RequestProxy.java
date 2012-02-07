@@ -51,6 +51,7 @@ package gov.loc.ndmso.proxyfilter;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpConnection;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.ProxyHost;
 import org.apache.commons.httpclient.SimpleHttpConnectionManager;
@@ -184,6 +185,11 @@ public class RequestProxy {
 
         // log.info("set up response, result code was " + result);
         targetRequest.releaseConnection();
+        SimpleHttpConnectionManager connManager = (SimpleHttpConnectionManager) client.getHttpConnectionManager();
+        // connManager.closeIdleConnections(1000);
+        
+        HttpConnection httpConn = connManager.getConnection(config);
+        httpConn.close();
     }
 
     public static void copyStreamText(String in, PrintWriter out) throws IOException {
