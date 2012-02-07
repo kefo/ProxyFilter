@@ -140,10 +140,11 @@ public class RequestProxy {
         //copy the target response headers to our response
         setupResponseHeaders(targetRequest, hsResponse);
         
-        String binRegex = "(\\.(?i)(jpg|png|gif|bmp|mp3|mpg))";
+        String binRegex = ".*\\.(?i)(jpg|tif|png|gif|bmp|mp3|mpg)(.*$)*";
+        String binRegexRedux = ".*(?i)(\\/thumb)(.*$)*";
         
-        if ( target.matches(binRegex) ) {
-        	log.info("binRegex matched: " + target);
+        if ( target.matches(binRegex) || target.matches(binRegexRedux) ) {
+        	// log.info("binRegex matched: " + target);
             InputStream originalResponseStream = targetRequest.getResponseBodyAsStream();
             
             if (originalResponseStream != null) {
@@ -158,7 +159,7 @@ public class RequestProxy {
             }
         	
         } else {
-        	log.info("binRegex NOT matched: " + target);
+        	// log.info("binRegex NOT matched: " + target);
         	String proxyResponseStr = targetRequest.getResponseBodyAsString();
         	// the body might be null, i.e. for responses with cache-headers which leave out the body
         
