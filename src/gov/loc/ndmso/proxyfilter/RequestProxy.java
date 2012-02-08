@@ -51,10 +51,9 @@ package gov.loc.ndmso.proxyfilter;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpConnection;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.ProxyHost;
-import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -92,7 +91,7 @@ public class RequestProxy {
      * @param hsResponse The response data which will contain the data returned by the proxied request to target.
      * @throws java.io.IOException Passed on from the connection logic.
      */
-    public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse) throws IOException {
+    public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse, MultiThreadedHttpConnectionManager connManager) throws IOException {
         // log.info("execute, target is " + target);
         // log.info("response commit state: " + hsResponse.isCommitted());
 
@@ -129,7 +128,7 @@ public class RequestProxy {
         }
 
         //perform the request to the target server
-        final HttpClient client = new HttpClient(new SimpleHttpConnectionManager());
+        final HttpClient client = new HttpClient(connManager);
         //if (log.isInfoEnabled()) {
             // log.info("client state" + client.getState());
             // log.info("client params" + client.getParams().toString());
@@ -185,11 +184,13 @@ public class RequestProxy {
 
         // log.info("set up response, result code was " + result);
         targetRequest.releaseConnection();
-        SimpleHttpConnectionManager connManager = (SimpleHttpConnectionManager) client.getHttpConnectionManager();
+        
+        // SimpleHttpConnectionManager connManager = (SimpleHttpConnectionManager) client.getHttpConnectionManager();
         // connManager.closeIdleConnections(1000);
         
-        HttpConnection httpConn = connManager.getConnection(config);
-        httpConn.close();
+        // HttpConnection httpConn = connManager.getConnection(config);
+        // httpConn.releaseConnection();
+        
     }
 
     public static void copyStreamText(String in, PrintWriter out) throws IOException {

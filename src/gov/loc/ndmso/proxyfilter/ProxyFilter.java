@@ -20,6 +20,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+
 import gov.loc.ndmso.proxyfilter.Log;
 
 import gov.loc.ndmso.proxyfilter.RequestProxy;
@@ -30,8 +34,18 @@ import gov.loc.ndmso.proxyfilter.RequestProxy;
  */
 public final class ProxyFilter implements Filter {
 		private static final Log log = Log.getLog(ProxyFilter.class);
+		private MultiThreadedHttpConnectionManager connManager = null;
 	  
-	  public void init(FilterConfig config) throws ServletException { }
+	  public void init(FilterConfig config) throws ServletException { 
+		  // log.info("In ProxyFilter init");
+		  
+		  connManager = new MultiThreadedHttpConnectionManager();
+		  
+		  HttpConnectionManagerParams connParams = new HttpConnectionManagerParams();
+		  connParams.setMaxTotalConnections(30); // or some number of connections
+		  connManager.setParams(connParams);
+
+	  }
 
     /**
      * Finds the search and replace strings in the configuration file. Looks for
@@ -63,11 +77,16 @@ public final class ProxyFilter implements Filter {
         if (pathInfo == null) {
         	pathInfo = "";
         }
-        RequestProxy.execute("http://mar04vlp.loc.gov" + servletPath + pathInfo + queryString, hsRequest, hsResponse);
+        //log.info("In ProxyFilter doFilter:  requesting " + servletPath + pathInfo + queryString);
+        RequestProxy.execute("http://mar04vlp.loc.gov" + servletPath + pathInfo + queryString, hsRequest, hsResponse, connManager);
 
     }
 
-    public void destroy() { }
+    public void destroy() {
+    	// log.info("In ProxyFilter destroy");
+    	// connManager.closeIdleConnections(100);
+    	connManager.shutdown();
+    }
     
 }
 
