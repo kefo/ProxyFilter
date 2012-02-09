@@ -42,7 +42,7 @@ public final class ProxyFilter implements Filter {
 		  connManager = new MultiThreadedHttpConnectionManager();
 		  
 		  HttpConnectionManagerParams connParams = new HttpConnectionManagerParams();
-		  connParams.setMaxTotalConnections(30); // or some number of connections
+		  connParams.setDefaultMaxConnectionsPerHost(15); // or some number of connections
 		  connManager.setParams(connParams);
 
 	  }
