@@ -176,6 +176,9 @@ public class RequestProxy {
         		proxyResponseStr = proxyResponseStr.replaceAll("url\\(/", "url\\(/diglib/");
         		
         		proxyResponseStr = proxyResponseStr.replaceAll("/nlc/", "/lcds/");
+        		proxyResponseStr = proxyResponseStr.replaceAll("/lcwa/", "/lcwanew/");
+        		
+        		proxyResponseStr = proxyResponseStr.replaceAll(".xqy", ".jsp");
         		
         		PrintWriter responseStream = hsResponse.getWriter();
         		copyStreamText(proxyResponseStr, responseStream);

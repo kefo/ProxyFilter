@@ -68,6 +68,9 @@ public final class ProxyFilter implements Filter {
         // log.info("scheme is " + scheme + "; serverName is " + serverName + "; portNumber is " + portNumber + "; contextPath is " + contextPath + "; servletPath is " + servletPath + "; pathInfo is " + pathInfo + "; queryString is " + queryString);
         
         servletPath = servletPath.replaceAll("/lcds", "/nlc");
+        servletPath = servletPath.replaceAll("/lcwanew", "/lcwa");
+        
+        servletPath = servletPath.replaceAll(".jsp", ".xqy");
         
         if (queryString != null) {
         	queryString = "?" + queryString;
@@ -76,6 +79,8 @@ public final class ProxyFilter implements Filter {
         }
         if (pathInfo == null) {
         	pathInfo = "";
+        } else {
+        	pathInfo = pathInfo.replaceAll(".jsp", ".xqy");
         }
         //log.info("In ProxyFilter doFilter:  requesting " + servletPath + pathInfo + queryString);
         RequestProxy.execute("http://mar04vlp.loc.gov" + servletPath + pathInfo + queryString, hsRequest, hsResponse, connManager);
