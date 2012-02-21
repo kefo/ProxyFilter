@@ -72,6 +72,15 @@ public final class ProxyFilter implements Filter {
         
         servletPath = servletPath.replaceAll(".jsp", ".xqy");
         
+        // collection will be someting like
+        //		/tohap
+        //		/lcwa
+        String[] pathParts=servletPath.split("/");
+        String collection="";
+        if ( !(pathParts[1].matches("static|fcgi\\-bin|media")) ) {
+        	collection="/"+pathParts[1];
+        }
+        
         if (queryString != null) {
         	queryString = "?" + queryString;
         } else {
@@ -83,7 +92,7 @@ public final class ProxyFilter implements Filter {
         	pathInfo = pathInfo.replaceAll(".jsp", ".xqy");
         }
         //log.info("In ProxyFilter doFilter:  requesting " + servletPath + pathInfo + queryString);
-        RequestProxy.execute("http://mar04vlp.loc.gov" + servletPath + pathInfo + queryString, hsRequest, hsResponse, connManager);
+        RequestProxy.execute("http://mar04vlp.loc.gov" + servletPath + pathInfo + queryString, collection, hsRequest, hsResponse, connManager);
 
     }
 

@@ -91,7 +91,7 @@ public class RequestProxy {
      * @param hsResponse The response data which will contain the data returned by the proxied request to target.
      * @throws java.io.IOException Passed on from the connection logic.
      */
-    public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse, MultiThreadedHttpConnectionManager connManager) throws IOException {
+    public static void execute(final String target, final String collection, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse, MultiThreadedHttpConnectionManager connManager) throws IOException {
         // log.info("execute, target is " + target);
         // log.info("response commit state: " + hsResponse.isCommitted());
 
@@ -172,8 +172,10 @@ public class RequestProxy {
         		
         		proxyResponseStr = proxyResponseStr.replaceAll("action=\"/", "action=\"/diglib/");
         		proxyResponseStr = proxyResponseStr.replaceAll("href=\"/", "href=\"/diglib/");
+        		proxyResponseStr = proxyResponseStr.replaceAll("href=\"/diglib/loc\\.", "href=\"/diglib" + collection + "/loc."); 
         		proxyResponseStr = proxyResponseStr.replaceAll("src=\"/", "src=\"/diglib/");
         		proxyResponseStr = proxyResponseStr.replaceAll("url\\(/", "url\\(/diglib/");
+        		proxyResponseStr = proxyResponseStr.replaceAll("natlibcat@loc.gov", "ndmso@loc.gov");
         		
         		proxyResponseStr = proxyResponseStr.replaceAll("/nlc/", "/lcds/");
         		proxyResponseStr = proxyResponseStr.replaceAll("/lcwa/", "/lcwanew/");
