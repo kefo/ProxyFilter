@@ -69,6 +69,8 @@ public final class ProxyFilter implements Filter {
         
         servletPath = servletPath.replaceAll("/lcds", "/nlc");
         servletPath = servletPath.replaceAll("/lcwanew", "/lcwa");
+        servletPath = servletPath.replaceAll("/x-tohap", "/tohap");
+        servletPath = servletPath.replaceAll("/id/", "/");
         
         servletPath = servletPath.replaceAll(".jsp", ".xqy");
         
@@ -92,7 +94,7 @@ public final class ProxyFilter implements Filter {
         	pathInfo = pathInfo.replaceAll(".jsp", ".xqy");
         }
         //log.info("In ProxyFilter doFilter:  requesting " + servletPath + pathInfo + queryString);
-        RequestProxy.execute("http://mar04vlp.loc.gov" + servletPath + pathInfo + queryString, collection, hsRequest, hsResponse, connManager);
+        RequestProxy.execute("http://mar04vlp.loc.gov:8081" + servletPath + pathInfo + queryString, collection, hsRequest, hsResponse, connManager);
 
     }
 
