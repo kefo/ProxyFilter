@@ -172,13 +172,15 @@ public class RequestProxy {
         		
         		proxyResponseStr = proxyResponseStr.replaceAll("action=\"/", "action=\"/diglib/");
         		proxyResponseStr = proxyResponseStr.replaceAll("href=\"/", "href=\"/diglib/");
-        		proxyResponseStr = proxyResponseStr.replaceAll("href=\"/diglib/loc\\.", "href=\"/diglib" + collection + "/loc."); 
+        		proxyResponseStr = proxyResponseStr.replaceAll("href=\"/diglib/loc\\.", "href=\"/diglib/id/loc."); 
         		proxyResponseStr = proxyResponseStr.replaceAll("src=\"/", "src=\"/diglib/");
         		proxyResponseStr = proxyResponseStr.replaceAll("url\\(/", "url\\(/diglib/");
+        		proxyResponseStr = proxyResponseStr.replaceAll("url\\(\"/", "url\\(\"/diglib/");
         		proxyResponseStr = proxyResponseStr.replaceAll("natlibcat@loc.gov", "ndmso@loc.gov");
         		
         		proxyResponseStr = proxyResponseStr.replaceAll("/nlc/", "/lcds/");
         		proxyResponseStr = proxyResponseStr.replaceAll("/lcwa/", "/lcwanew/");
+        		//proxyResponseStr = proxyResponseStr.replaceAll("/tohap/", "/x-tohap/");
         		
         		proxyResponseStr = proxyResponseStr.replaceAll(".xqy", ".jsp");
         		
