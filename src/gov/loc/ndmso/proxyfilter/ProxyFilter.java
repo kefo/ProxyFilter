@@ -79,8 +79,8 @@ public final class ProxyFilter implements Filter {
         //		/lcwa
         String[] pathParts=servletPath.split("/");
         String collection="";
-        if ( !(pathParts[1].matches("static|fcgi\\-bin|media")) ) {
-        	collection="/"+pathParts[1];
+        if ( !(pathParts[1].matches("static|fcgi\\-bin|media|audio|share")) ) {
+        	collection=pathParts[1];
         }
         
         if (queryString != null) {
