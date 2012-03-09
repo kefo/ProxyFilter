@@ -298,6 +298,23 @@ public class RequestProxy {
             // log.info("status text: " + httpMethod.getStatusText());
             // log.info("status line: " + httpMethod.getStatusLine());
         //}
+    	
+    	String ctHeaderFullStr = "";
+    	String ctHeaderStr = "";
+    	boolean ctHeaderExists = false;
+    	for (int i = 0; i < httpMethod.getResponseHeaders().length; i++) {
+    		Header h = httpMethod.getResponseHeaders()[i];
+    		if ("content-type".equalsIgnoreCase(h.getName())) {
+    			ctHeaderFullStr = h.toString();
+    			ctHeaderStr = h.getValue();
+    	    	//log.info("ctHeaderFullStr is " + ctHeaderFullStr);
+    	    	//log.info("ctHeaderStr is " + ctHeaderStr);
+    			if (ctHeaderStr.indexOf("audio/mpeg") > -1 ) {
+    				//log.info("We have a match.  ctHeaderExists is true");
+    	    		ctHeaderExists = true;
+    	    	}
+    		}   		
+    	}
 
         //filter the headers, which are copied from the proxy response. The http lib handles those itself.
         //Filtered out: the content encoding, the content length and cookies
@@ -305,7 +322,7 @@ public class RequestProxy {
             Header h = httpMethod.getResponseHeaders()[i];
             if ("content-encoding".equalsIgnoreCase(h.getName())) {
                 continue;
-            } else if ("content-length".equalsIgnoreCase(h.getName())) {
+            } else if ("content-length".equalsIgnoreCase(h.getName()) && !ctHeaderExists) {
                 continue;
             } else if ("transfer-encoding".equalsIgnoreCase(h.getName())) {
                 continue;
