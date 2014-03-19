@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 
 import gov.loc.ndmso.proxyfilter.Log;
@@ -43,6 +44,7 @@ public final class ProxyFilter implements Filter {
 		  
 		  HttpConnectionManagerParams connParams = new HttpConnectionManagerParams();
 		  connParams.setDefaultMaxConnectionsPerHost(15); // or some number of connections
+		  connParams.setConnectionTimeout(10000);
 		  connManager.setParams(connParams);
 
 	  }
@@ -65,7 +67,7 @@ public final class ProxyFilter implements Filter {
         String pathInfo = hsRequest.getPathInfo();
         String queryString = hsRequest.getQueryString();
         
-         log.info("scheme is " + scheme + "; serverName is " + serverName + "; portNumber is " + portNumber + "; contextPath is " + contextPath + "; servletPath is " + servletPath + "; pathInfo is " + pathInfo + "; queryString is " + queryString);
+       //  log.info("scheme is " + scheme + "; serverName is " + serverName + "; portNumber is " + portNumber + "; contextPath is " + contextPath + "; servletPath is " + servletPath + "; pathInfo is " + pathInfo + "; queryString is " + queryString);
         
         servletPath = servletPath.replaceAll("/lcds", "/nlc");
         servletPath = servletPath.replaceAll("/lcwanew", "/lcwa");
@@ -93,7 +95,7 @@ public final class ProxyFilter implements Filter {
         } else {
         	pathInfo = pathInfo.replaceAll(".jsp", ".xqy");
         }
-        log.info("In ProxyFilter doFilter:  requesting " + servletPath + pathInfo + queryString);
+        // log.info("In ProxyFilter doFilter:  requesting " + servletPath + pathInfo + queryString);
         RequestProxy.execute("http://mar04vlp.loc.gov:80" + servletPath + pathInfo + queryString, collection, hsRequest, hsResponse, connManager);
 
     }
