@@ -73,12 +73,14 @@ public class Log {
     private static boolean errorLevelEnabled = true;
     private static boolean fatalLevelEnabled = false;
 
-    private Class clazz = null;
+    @SuppressWarnings("rawtypes")
+	private Class clazz = null;
 
     private org.apache.log4j.Logger log4jLogger = null;
     private org.apache.commons.logging.Log commonsLog = null;
 
-    private Log(Class clazz) {
+    @SuppressWarnings("rawtypes")
+	private Log(Class clazz) {
         this.clazz = clazz;
         // check for log4j or commons
         isUsingLog4j();
@@ -420,7 +422,8 @@ public class Log {
      * @param aClass to log for
      * @return the log instance
      */
-    public static Log getLog(Class aClass) {
+    @SuppressWarnings("rawtypes")
+	public static Log getLog(Class aClass) {
         return new Log(aClass);
     }
 
