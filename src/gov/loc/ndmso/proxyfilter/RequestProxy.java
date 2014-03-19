@@ -92,7 +92,7 @@ public class RequestProxy {
      * @throws java.io.IOException Passed on from the connection logic.
      */
     public static void execute(final String target, final String collection, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse, MultiThreadedHttpConnectionManager connManager) throws IOException {
-         log.info("execute, target is " + target);
+        // log.info("execute, target is " + target);
         // log.info("response commit state: " + hsResponse.isCommitted());
 
         if (target == null || "".equals(target) || "".equals(target.trim())) {
@@ -109,7 +109,7 @@ public class RequestProxy {
             return;
         }
 
-         log.info("setting up the host configuration");
+        // log.info("setting up the host configuration");
 
         final HostConfiguration config = new HostConfiguration();
 
@@ -119,14 +119,14 @@ public class RequestProxy {
         final int port = url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
         config.setHost(url.getHost(), port, "http");
 
-         log.info("config is " + config.toString());
+        // log.info("config is " + config.toString());
 
         final HttpMethod targetRequest = setupProxyRequest(hsRequest, url);
         if (targetRequest == null) {
             // log.error("Unsupported request method found: " + hsRequest.getMethod());
             return;
         }
-
+        
         //perform the request to the target server
         final HttpClient client = new HttpClient(connManager);
         //if (log.isInfoEnabled()) {
@@ -144,7 +144,7 @@ public class RequestProxy {
         String binRegexRedux = ".*(?i)(\\/thumb)(.*$)*";
         
         if ( target.matches(binRegex) || target.matches(binRegexRedux) ) {
-        	 log.info("binRegex matched: " + target);
+        	// log.info("binRegex matched: " + target);
             InputStream originalResponseStream = targetRequest.getResponseBodyAsStream();
             
             if (originalResponseStream != null) {
@@ -159,7 +159,7 @@ public class RequestProxy {
             }
         	
         } else {
-        	 log.info("binRegex NOT matched: " + target);
+        	// log.info("binRegex NOT matched: " + target);
         	String proxyResponseStr = targetRequest.getResponseBodyAsString();
         	// the body might be null, i.e. for responses with cache-headers which leave out the body
         
@@ -192,7 +192,7 @@ public class RequestProxy {
         	}
         }
 
-         log.info("set up response, result code was " + result);
+        // log.info("set up response, result code was " + result);
         targetRequest.releaseConnection();
         
         // SimpleHttpConnectionManager connManager = (SimpleHttpConnectionManager) client.getHttpConnectionManager();
@@ -301,13 +301,13 @@ public class RequestProxy {
             // log.info("status line: " + httpMethod.getStatusLine());
         //}
     	
-    	String ctHeaderFullStr = "";
+    	//String ctHeaderFullStr = "";
     	String ctHeaderStr = "";
     	boolean ctHeaderExists = false;
     	for (int i = 0; i < httpMethod.getResponseHeaders().length; i++) {
     		Header h = httpMethod.getResponseHeaders()[i];
     		if ("content-type".equalsIgnoreCase(h.getName())) {
-    			ctHeaderFullStr = h.toString();
+    			//ctHeaderFullStr = h.toString();
     			ctHeaderStr = h.getValue();
     	    	//log.info("ctHeaderFullStr is " + ctHeaderFullStr);
     	    	//log.info("ctHeaderStr is " + ctHeaderStr);
