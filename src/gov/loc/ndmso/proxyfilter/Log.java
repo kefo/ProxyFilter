@@ -1,5 +1,5 @@
 /**
- * Modified 2011-12-12 by Kevin Ford (kefo@loc.gov, kefo@3windmills.com)
+ * Modified 2011-12-12 by John Smith (jsmith@name.com)
  * 
  * Removed references to slf4j
  * 

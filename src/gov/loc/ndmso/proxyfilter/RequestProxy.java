@@ -1,5 +1,5 @@
 /**
- * Modified 2011-12-12 by Kevin Ford (kefo@loc.gov, kefo@3windmills.com)
+ * Modified 2011-12-12 by John Smith (jsmith@name.com)
  * 
  * It's a little ironic that the below copyright and license must pollute the 
  * top part of this file.  It appears that Tuckey took the work of Ansorg and placed 
@@ -92,11 +92,11 @@ public class RequestProxy {
      * @throws java.io.IOException Passed on from the connection logic.
      */
     public static void execute(final String target, final String collection, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse, MultiThreadedHttpConnectionManager connManager) throws IOException {
-        // log.info("execute, target is " + target);
+         log.info("execute, target is " + target);
         // log.info("response commit state: " + hsResponse.isCommitted());
 
         if (target == null || "".equals(target) || "".equals(target.trim())) {
-            // log.error("The target address is not given. Please provide a target address.");
+             log.error("The target address is not given. Please provide a target address.");
             return;
         }
 
@@ -109,7 +109,7 @@ public class RequestProxy {
             return;
         }
 
-        // log.info("setting up the host configuration");
+         log.info("setting up the host configuration");
 
         final HostConfiguration config = new HostConfiguration();
 
@@ -119,7 +119,7 @@ public class RequestProxy {
         final int port = url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
         config.setHost(url.getHost(), port, "http");
 
-        // log.info("config is " + config.toString());
+         log.info("config is " + config.toString());
 
         final HttpMethod targetRequest = setupProxyRequest(hsRequest, url);
         if (targetRequest == null) {
@@ -144,7 +144,7 @@ public class RequestProxy {
         String binRegexRedux = ".*(?i)(\\/thumb)(.*$)*";
         
         if ( target.matches(binRegex) || target.matches(binRegexRedux) ) {
-        	// log.info("binRegex matched: " + target);
+        	 log.info("binRegex matched: " + target);
             InputStream originalResponseStream = targetRequest.getResponseBodyAsStream();
             
             if (originalResponseStream != null) {
@@ -159,7 +159,7 @@ public class RequestProxy {
             }
         	
         } else {
-        	// log.info("binRegex NOT matched: " + target);
+        	 log.info("binRegex NOT matched: " + target);
         	String proxyResponseStr = targetRequest.getResponseBodyAsString();
         	// the body might be null, i.e. for responses with cache-headers which leave out the body
         
@@ -192,7 +192,7 @@ public class RequestProxy {
         	}
         }
 
-        // log.info("set up response, result code was " + result);
+         log.info("set up response, result code was " + result);
         targetRequest.releaseConnection();
         
         // SimpleHttpConnectionManager connManager = (SimpleHttpConnectionManager) client.getHttpConnectionManager();
@@ -256,10 +256,11 @@ public class RequestProxy {
         method.setPath(targetUrl.getPath());
         method.setQueryString(targetUrl.getQuery());
 
-        Enumeration e = hsRequest.getHeaderNames();
+        @SuppressWarnings("unchecked")
+		Enumeration<String> e = hsRequest.getHeaderNames();
         if (e != null) {
             while (e.hasMoreElements()) {
-                String headerName = (String) e.nextElement();
+                String headerName = e.nextElement();
                 if ("host".equalsIgnoreCase(headerName)) {
                     //the host value is set by the http client
                     continue;
@@ -276,9 +277,10 @@ public class RequestProxy {
                     continue;
                 }
 
-                Enumeration values = hsRequest.getHeaders(headerName);
+                @SuppressWarnings("unchecked")
+                Enumeration<String> values = hsRequest.getHeaders(headerName);
                 while (values.hasMoreElements()) {
-                    String headerValue = (String) values.nextElement();
+                    String headerValue = values.nextElement();
                     // log.info("setting proxy request parameter:" + headerName + ", value: " + headerValue);
                     method.addRequestHeader(headerName, headerValue);
                 }

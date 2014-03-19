@@ -1,5 +1,5 @@
 /**
- * Modified 2011-12-12 by Kevin Ford (kefo@loc.gov, kefo@3windmills.com)
+ * Modified 2011-12-12 by John Smith (jsmith@name.com)
  * 
  * This file, but not necessarily others in this package, is in the 
  * Public Domain.
@@ -65,7 +65,7 @@ public final class ProxyFilter implements Filter {
         String pathInfo = hsRequest.getPathInfo();
         String queryString = hsRequest.getQueryString();
         
-        // log.info("scheme is " + scheme + "; serverName is " + serverName + "; portNumber is " + portNumber + "; contextPath is " + contextPath + "; servletPath is " + servletPath + "; pathInfo is " + pathInfo + "; queryString is " + queryString);
+         log.info("scheme is " + scheme + "; serverName is " + serverName + "; portNumber is " + portNumber + "; contextPath is " + contextPath + "; servletPath is " + servletPath + "; pathInfo is " + pathInfo + "; queryString is " + queryString);
         
         servletPath = servletPath.replaceAll("/lcds", "/nlc");
         servletPath = servletPath.replaceAll("/lcwanew", "/lcwa");
@@ -93,8 +93,8 @@ public final class ProxyFilter implements Filter {
         } else {
         	pathInfo = pathInfo.replaceAll(".jsp", ".xqy");
         }
-        //log.info("In ProxyFilter doFilter:  requesting " + servletPath + pathInfo + queryString);
-        RequestProxy.execute("http://mar04vlp.loc.gov:8081" + servletPath + pathInfo + queryString, collection, hsRequest, hsResponse, connManager);
+        log.info("In ProxyFilter doFilter:  requesting " + servletPath + pathInfo + queryString);
+        RequestProxy.execute("http://mar04vlp.loc.gov:80" + servletPath + pathInfo + queryString, collection, hsRequest, hsResponse, connManager);
 
     }
 
